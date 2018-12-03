@@ -13,7 +13,7 @@ extragalactictarget=numpy.array([15,42,52,62,64,67,88,90,95])
 galactictarget=numpy.array([6,16,53,65,92])
 
 ddfdir='../ltcv_training/ddf/'
-widedir='../ltcv_training/ddf/'
+widedir='../ltcv_training/wide/'
 
 class LSSTplasticc:
 # Script for Plasticc Challenge
