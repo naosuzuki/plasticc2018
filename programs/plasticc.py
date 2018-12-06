@@ -53,7 +53,10 @@ class LSSTplasticc:
              self.target_list=self.metadata['target']
 
       def read_ltcvdata(self,csvfilename):
-          self.ltcv = pd.read_csv(csvfilename)
+          datatype={'object_id':'int32','mjd':'float16',\
+          'passband':'int8','flux':'float16','flux_err':'float16',\
+          'detected':'int8'}
+          self.ltcv = pd.read_csv(csvfilename,dtype=datatype)
           self.ltcv_id_list=self.ltcv['object_id']
           self.ltcv_mjd_list=self.ltcv['mjd']
           self.ltcv_filter_list=self.ltcv['passband']
