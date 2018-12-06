@@ -5,6 +5,7 @@ import sys
 import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import rc
+import pandas as pd
 
 #object_id,ra,decl,gall,galb,ddf_bool,hostgal_specz,hostgal_photoz,hostgal_photoz_err,distmod,mwebv,target
 
@@ -12,8 +13,8 @@ targetclass=numpy.array([6,15,16,42,52,53,62,64,65,67,88,90,92,95])
 extragalactictarget=numpy.array([15,42,52,62,64,67,88,90,95]) 
 galactictarget=numpy.array([6,16,53,65,92])
 
-ddfdir='../ltcv_training/ddf/'
-widedir='../ltcv_training/wide/'
+#ddfdir='../ltcv_training/ddf/'
+#widedir='../ltcv_training/wide/'
 
 class LSSTplasticc:
 # Script for Plasticc Challenge
@@ -33,56 +34,34 @@ class LSSTplasticc:
           self.mwebv=0.0
           self.target=0
 
-      def read_metadata_training(self,csvfilename):
-          metafile=open(csvfilename,'r')
-          metadata=metafile.readlines()
-          npix=len(metadata)
-          metafile.close()
-
-          # f4=float 32 bits ; i4=integer 32 bits
-          metadata=numpy.genfromtxt(metadata,dtype="i4,f4,f4,f4,f4,i4,f4,f4,f4,f4,f4,i4",\
-          names=['objectid','ra','decl','gall','galb','ddf',\
-                 'hostspecz','hostphotoz','hostphotozerr','dm','mwebv','target'],\
-          comments='#',delimiter=',',skip_header=1)
-          self.object_id_list=metadata[:]['objectid']
-         
-          self.ra_list=metadata[:]['ra']
-          self.decl_list=metadata[:]['decl']
-          self.gall_list=metadata[:]['gall']
-          self.galb_list=metadata[:]['galb']
-          self.ddf_list=metadata[:]['ddf']
-          self.specz_list=metadata[:]['hostspecz']
-          self.photoz_list=metadata[:]['hostphotoz']
-          self.photozerr_list=metadata[:]['hostphotozerr']
-          self.dm_list=metadata[:]['dm']
-          self.mwebv_list=metadata[:]['mwebv']
-          self.target_list=metadata[:]['target']
-
       def read_metadata(self,csvfilename):
-          metafile=open(csvfilename,'r')
-          metadata=metafile.readlines()
-          npix=len(metadata)
-          metafile.close()
-
-          # f4=float 32 bits ; i4=integer 32 bits
-          metadata=numpy.genfromtxt(metadata,dtype="i4,f4,f4,f4,f4,i4,f4,f4,f4,f4,f4",\
-          names=['objectid','ra','decl','gall','galb','ddf',\
-                 'hostspecz','hostphotoz','hostphotozerr','dm','mwebv'],\
-          comments='#',delimiter=',',skip_header=1)
-          self.object_id_list=metadata[:]['objectid']
-
-          self.ra_list=metadata[:]['ra']
-          self.decl_list=metadata[:]['decl']
-          self.gall_list=metadata[:]['gall']
-          self.galb_list=metadata[:]['galb']
-          self.ddf_list=metadata[:]['ddf']
-          self.specz_list=metadata[:]['hostspecz']
-          self.photoz_list=metadata[:]['hostphotoz']
-          self.photozerr_list=metadata[:]['hostphotozerr']
-          self.dm_list=metadata[:]['dm']
-          self.mwebv_list=metadata[:]['mwebv']
+          self.metadata = pd.read_csv(csvfilename)
+          self.object_id_list=self.metadata['object_id']
+          self.ra_list=self.metadata['ra']
+          self.decl_list=self.metadata['decl']
+          self.gall_list=self.metadata['gal_l']
+          self.galb_list=self.metadata['gal_b']
+          self.ddf_list=self.metadata['ddf']
+          self.specz_list=self.metadata['hostgal_specz']
+          self.photoz_list=self.metadata['hostgal_photoz']
+          self.photozerr_list=self.metadata['hostgal_photoz_err']
+          #self.metadata[numpy.isnan(self.metadata['distmod'])]=0
+          self.dm_list=self.metadata['distmod']
+          self.mwebv_list=self.metadata['mwebv']
+          # Training Set or Test Set
+          if(csvfilename.find('training')!=-1):
+             self.target_list=self.metadata['target']
 
       def read_ltcvdata(self,csvfilename):
+          self.ltcv = pd.read_csv(csvfilename)
+          self.ltcv_id_list=self.ltcv['object_id']
+          self.ltcv_mjd_list=self.ltcv['mjd']
+          self.ltcv_filter_list=self.ltcv['passband']
+          self.ltcv_flux_list=self.ltcv['flux']
+          self.ltcv_fluxerr_list=self.ltcv['flux_err']
+          self.ltcv_flag_list=self.ltcv['detected']
+
+      def read_ltcvdata00(self,csvfilename):
           ltcvfile=open(csvfilename,'r')
           ltcvdata=ltcvfile.readlines()
           npix=len(ltcvdata)
@@ -257,7 +236,7 @@ class LSSTplasticc:
              "   "+"%4i"%(self.flaglist[j])+"\n")
           outputfile.close()
 
-     def writeout_ltcv(self,objectid):
+      def writeout_ltcv(self,objectid):
           self.extract_ltcv(objectid)
           objname=str(objectid)
           if(self.ddf_bool==1): ddfdir='ddf'
