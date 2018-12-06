@@ -6,6 +6,7 @@ import matplotlib
 import matplotlib.pyplot as plt
 from matplotlib import rc
 
+
 #object_id,ra,decl,gall,galb,ddf_bool,hostgal_specz,hostgal_photoz,hostgal_photoz_err,distmod,mwebv,target
 
 targetclass=numpy.array([6,15,16,42,52,53,62,64,65,67,88,90,92,95])
