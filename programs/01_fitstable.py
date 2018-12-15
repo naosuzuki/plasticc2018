@@ -6,8 +6,11 @@ import scipy
 from scipy import stats
 import pandas as pd
 import pyfits
+import fitsio
+import time
 
-datadir='/work/nsuzuki/plasticc2018/data/'
+#datadir='/work/nsuzuki/plasticc2018/data/'
+datadir='/Users/suzuki/github/projects_plasticc/data_original/'
 targetclass=numpy.array([6,15,16,42,52,53,62,64,65,67,88,90,92,95])
 #object_id,ra,decl,gal_l,gal_b,ddf,hostgal_specz,hostgal_photoz,hostgal_photoz_err,distmod,mwebv,target
 
@@ -15,7 +18,8 @@ def write_fitstable_metadata():
     pl=plasticc.LSSTplasticc()
     #test_set = pd.read_csv('../data_original/test_set.csv')
     #pl.read_metadata('../data/training_set_metadata.csv')
-    pl.read_metadata('/work/nsuzuki/plasticc2018/data/test_set_metadata.csv')
+    #pl.read_metadata('/work/nsuzuki/plasticc2018/data/test_set_metadata.csv')
+    pl.read_metadata(datadir+'test_set_metadata.csv')
     print(len(pl.metadata['object_id']))
     c1=pyfits.Column(name='object_id',format='J',array=pl.metadata['object_id'])
     c2=pyfits.Column(name='ra',format='E',array=pl.metadata['ra'])
@@ -65,14 +69,137 @@ def write_fitstable_ltcv():
     tblhdu.writeto(datadir+'/test_set.fits')
 
 def read_fitstable_ltcv():
-    pl=plasticc.LSSTplasticc()
-    tbl=pyfits.open('../data/training_set.fits')
-    metadata=tbl[1].data
-    print(metadata['object_id'])
-    print(metadata['flux'])
+    #pl=plasticc.LSSTplasticc()
+    #tbl=pyfits.open('../data/training_set.fits',memmap=True)
+    start=time.time()
+    # Reading Meta data
+    metatbl=pyfits.open(datadir+'test_set_metadata.fits',memmap=True)
+    metadata=metatbl[1].data
+    end=time.time()
+    print('Meta data is read')
+    print('Metadata readout time',end-start)
 
+    start=time.time()
+    # Reading LTCV data
+    ltcvtbl=pyfits.open(datadir+'test_set.fits',memmap=True)
+    ltcvdata=ltcvtbl[1].data
+    end=time.time()
+    print('LTCV data is read')
+    print('LTCVdata readout time',end-start)
+    #rows=numpy.where((ltcvdata['object_id']==objid) & (ltcvdata['passband']==1) & (ltcvdata['detected']==True))
 
+    rows=numpy.arange(30)
+    rows=rows+100000000
+
+    start=time.time()
+    ltcv1=ltcvdata[rows]
+    rows1=numpy.where((ltcv1['passband']==1) & (ltcv1['detected']==True))
+    ltcvdata1=ltcv1[rows1]
+    end=time.time()
+    print('extract 1',end-start)
+    print(ltcvdata1)
+
+    rows=rows+100000000
+    start=time.time()
+    ltcv2=ltcvdata[rows]
+    end=time.time()
+    print('extract 2',end-start)
+    print(ltcv2)
+
+    rows=rows+100000000
+    start=time.time()
+    ltcv3=ltcvdata[rows]
+    end=time.time()
+    print('extract 3',end-start)
+    print(ltcv3)
+
+    rows=rows+100000000
+    start=time.time()
+    ltcv4=ltcvdata[rows]
+    end=time.time()
+    print('extract 4',end-start)
+    print(ltcv4)
+    #print(metadata[10000])
+    #print(metadata[10000]['object_id'])
+
+    start=time.time()
+    print("testing by object id")
+    objid=metadata[10000]['object_id']
+    rows=numpy.where((ltcvdata['object_id']==objid) & (ltcvdata['passband']==1) & (ltcvdata['detected']==True))
+    ltcv5=ltcvdata[rows]
+    end=time.time()
+    print('by object_id extract 5',end-start)
+    print(ltcv5)
+
+    for i in range(10):
+       print("testing by object id loop")
+       start=time.time()
+       objid=metadata[i]['object_id']
+       rows=numpy.where((ltcvdata['object_id']==objid) & (ltcvdata['passband']==1) & (ltcvdata['detected']==True))
+       ltcvx=ltcvdata[rows]
+       end=time.time()
+       print('by object_id extract x loop',i,end-start)
+       print(ltcvx)
+
+    metatbl.close()
+    ltcvtbl.close()
+    #print(ltcvdata['object_id'])
+    #print(ltcvdata['flux'])
+    #indivdata=ltcvdata['object_id'==745]
+    #print(indivdata['flux'])
+def read_fitstable_ltcv2():
+    metadata=fitsio.read(datadir+'test_set_metadata.fits',memmap=True)
+    print('Meta data is read')
+    ltcvdata=fitsio.read(datadir+'test_set.fits')
+    print('LTCV data is read')
+    objid=metadata[10000]['object_id']
+    rows=numpy.where((ltcvdata['object_id']==objid) & (ltcvdata['passband']==1) & (ltcvdata['detected']==True))
+    ltcv1=ltcvdata[rows]
+    print(ltcv1)
+    
+def read_asciitable_ltcv():
+    #pl=plasticc.LSSTplasticc()
+    #pl.read_metadata(datadir+'test_set_metadata.csv')
+    metadata=pd.read_csv(datadir+'test_set_metadata.csv')
+    print('Meta data is read')
+    start=time.time()
+    ltcvdata=pd.read_csv(datadir+'test_set.csv')
+    print('LTCV data is read')
+    end=time.time()
+    print('readout time',end-start)
+    #metadata['object_id']
+    objid=metadata[10000]['object_id']
+    #rows=numpy.where((ltcvdata['object_id']==objid) & (ltcvdata['passband']==1) & (ltcvdata['detected']==True))
+    rows=numpy.arange(10)
+    rows=rows+100000000
+    start=time.time()
+    ltcv1=ltcvdata[rows]
+    end=time.time()
+    print('extract 1',end-start)
+    print(ltcv1)
+    rows=rows+100000000
+    start=time.time()
+    ltcv2=ltcvdata[rows]
+    end=time.time()
+    print('extract 2',end-start)
+    print(ltcv2)
+    rows=rows+100000000
+    start=time.time()
+    ltcv3=ltcvdata[rows]
+    end=time.time()
+    print('extract 3',end-start)
+    print(ltcv3)
+    rows=rows+100000000
+    start=time.time()
+    ltcv4=ltcvdata[rows]
+    end=time.time()
+    print('extract 4',end-start)
+    print(ltcv4)
+
+#read_asciitable_ltcv()
+read_fitstable_ltcv()
+#read_fitstable_ltcv2()
 #write_fitstable_metadata()
 #read_fitstable_metadata()
 #read_fitstable_ltcv()
-write_fitstable_ltcv()
+#write_fitstable_ltcv()
