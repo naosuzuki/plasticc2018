@@ -66,5 +66,5 @@ def read_fitstable_ltcv():
 
 #write_fitstable_metadata()
 #read_fitstable_metadata()
-read_fitstable_ltcv()
+#read_fitstable_ltcv()
 #write_fitstable_ltcv()
