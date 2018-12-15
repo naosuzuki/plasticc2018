@@ -53,16 +53,36 @@ class LSSTplasticc:
              self.target_list=self.metadata['target']
 
       def read_ltcvdata(self,csvfilename):
-          datatype={'object_id':'int32','mjd':'float16',\
+          datatype={'object_id':'int32','mjd':'float32',\
           'passband':'int8','flux':'float16','flux_err':'float16',\
           'detected':'int8'}
-          self.ltcv = pd.read_csv(csvfilename,dtype=datatype)
+          #self.ltcv = pd.read_csv(csvfilename,dtype=datatype,nrows=100)
+          #self.ltcv = pd.read_csv(csvfilename,nrows=100)
+          self.ltcv = pd.read_csv(csvfilename)
           self.ltcv_id_list=self.ltcv['object_id']
           self.ltcv_mjd_list=self.ltcv['mjd']
           self.ltcv_filter_list=self.ltcv['passband']
           self.ltcv_flux_list=self.ltcv['flux']
           self.ltcv_fluxerr_list=self.ltcv['flux_err']
           self.ltcv_flag_list=self.ltcv['detected']
+
+      def read_ltcvdata_genfromtxt(self,csvfilename):
+          ltcvfile=open(csvfilename,'r')
+          ltcvdata=ltcvfile.readlines()
+          npix=len(ltcvdata)
+          ltcvfile.close()
+
+          #object_id,mjd,passband,flux,flux_err,detected
+          # f4=float 32 bits ; i4=integer 32 bits
+          self.ltcv=numpy.genfromtxt(ltcvdata,dtype="i8,f4,i4,f4,f4,i4",\
+          names=['object_id','mjd','passband','flux','flux_err','detected'],\
+          comments='#',delimiter=',',skip_header=1)
+          self.ltcv_id_list=self.ltcv[:]['object_id']
+          self.ltcv_mjd_list=self.ltcv[:]['mjd']
+          self.ltcv_filter_list=self.ltcv[:]['passband']
+          self.ltcv_flux_list=self.ltcv[:]['flux']
+          self.ltcv_fluxerr_list=self.ltcv[:]['flux_err']
+          self.ltcv_flag_list=self.ltcv[:]['detected']
 
       def plot_trainingltcv(self,objectid):
 
