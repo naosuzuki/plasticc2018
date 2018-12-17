@@ -6,9 +6,9 @@ datadir='/Users/suzuki/github/projects_plasticc/data_original/'
 def write_fitstable_ltcv():
     pl=plasticc.LSSTplasticc()
     #pl.read_ltcvdata('../data/training_set.csv')
-    #pl.read_ltcvdata(datadir+'/test_set.csv')
+    pl.read_ltcvdata(datadir+'/test_set.csv')
     #pl.read_ltcvdata_genfromtxt(datadir+'/test_set100.csv')
-    pl.read_ltcvdata_genfromtxt(datadir+'/test_set.csv')
+    #pl.read_ltcvdata_genfromtxt(datadir+'/test_set.csv')
     print('Finished Reading csv, Number of Object=',len(pl.ltcv['object_id']))
 
     c1=pyfits.Column(name='object_id',format='J',array=pl.ltcv['object_id'])
