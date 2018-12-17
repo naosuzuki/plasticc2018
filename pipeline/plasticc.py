@@ -110,6 +110,20 @@ class LSSTplasticc:
           self.fluxerr=self.ltcv_fluxerr_list[self.start_row:self.end_row]
           self.detected=self.ltcv_detected_list[self.start_row:self.end_row]
 
+      def extract_ltcvfitsbyfilter(self):
+          frows0=numpy.where(self.filter==0)
+          frows1=numpy.where(self.filter==1)
+          frows2=numpy.where(self.filter==2)
+          frows3=numpy.where(self.filter==3)
+          frows4=numpy.where(self.filter==4)
+          frows5=numpy.where(self.filter==5)
+          self.mjd0=self.mjd[frows0] ; self.flux0=self.flux[frows0] ; self.fluxerr0=self.fluxerr[frows0]
+          self.mjd1=self.mjd[frows1] ; self.flux1=self.flux[frows1] ; self.fluxerr1=self.fluxerr[frows1]
+          self.mjd2=self.mjd[frows2] ; self.flux2=self.flux[frows2] ; self.fluxerr2=self.fluxerr[frows2]
+          self.mjd3=self.mjd[frows3] ; self.flux3=self.flux[frows3] ; self.fluxerr3=self.fluxerr[frows3]
+          self.mjd4=self.mjd[frows4] ; self.flux4=self.flux[frows4] ; self.fluxerr4=self.fluxerr[frows4]
+          self.mjd5=self.mjd[frows5] ; self.flux5=self.flux[frows5] ; self.fluxerr5=self.fluxerr[frows5]
+
       def extract_basics(self):
           # Number of Data Points
           self.num=len(self.mjd)
@@ -134,6 +148,8 @@ class LSSTplasticc:
           self.sigmastd=numpy.mean(self.flux[drows]/self.fluxerr[drows])
           self.skewness=scipy.stats.skew(self.flux[drows])
           self.kurtosis=scipy.stats.kurtosis(self.flux[drows])
+          if(self.num!=0):
+             self.detectionfraction=float(self.dnum)/float(self.num)
 
           #if(len(drows_opt)>0):
           #    self.fluxmax=max(self.flux[drows_opt])
@@ -141,10 +157,17 @@ class LSSTplasticc:
           self.absmag=numpy.zeros(6,dtype=numpy.float)
           self.color=numpy.zeros(5,dtype=numpy.float)
 
+          self.fluxmaxall=max(self.flux[drows])
+
           # Absolute Magnitude
-          if(self.z>0.0):
+          if((self.z>0.0)&(self.fluxmaxall>0.0)):
              lcdm=cosmology.Cosmology()
              dm=lcdm.DistMod(self.z)
+             self.absmagall=27.5-2.5*numpy.log10(self.fluxmaxall)-dm
+          elif((self.z==0.0) &(self.fluxmaxall>0.0)):
+             self.absmagall=27.5-2.5*numpy.log10(self.fluxmaxall)
+          else:
+             self.absmagall=9.9
 
           for i in range(6):
              [drows_filter]=numpy.where((self.detected==True) & (self.filter==i))
@@ -162,6 +185,18 @@ class LSSTplasticc:
                  self.color[i]=-2.5*numpy.log10(self.fluxmax[i]/self.fluxmax[i+1])
               else:
                  self.color[i]=9.9
+
+          flag=0
+          if((flag==0) & (self.color[2]!=9.9)):
+              flag=1  ; self.colorall=self.color[2]
+          elif((flag==0) & (self.color[1]!=9.9)):
+              flag=1  ; self.colorall=self.color[1]
+          elif((flag==0) & (self.color[3]!=9.9)):
+              flag=1  ; self.colorall=self.color[3]
+          elif((flag==0) & (self.color[0]!=9.9)):
+              flag=1  ; self.colorall=self.color[0]
+          elif((flag==0) & (self.color[4]!=9.9)):
+              flag=1  ; self.colorall=self.color[4]
            
       def read_ltcvdata(self,csvfilename):
           datatype={'object_id':'int32','mjd':'float32',\
