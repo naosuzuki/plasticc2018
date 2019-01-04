@@ -1,0 +1,42 @@
+name: HyperparameterSearch
+
+conda_env: conda.yaml
+
+entry_points:
+    train:
+        parameters:
+            epochs: {type: int, default: 500}
+            batch_size: {type: int, default: 100}
+            data_path: {type: string, default: "."}
+            drop_rate: {type: string, default: "."}
+            hidden_size: {type: string, default: "."}
+            optimizer: {type: string, default: "adam"}
+        command: "python plasticc_simple2.py train --epochs={epochs}
+            --batch-size={batch_size}
+            --data-path={data_path} --hidden-size={hidden_size}
+            --drop-rate={drop_rate} --optimizer={optimizer}"
+
+    search:
+        parameters:
+            max_runs: {type: int, default: 10}
+            epochs: {type: int, default: 500}
+            batch_size: {type: int, default: 100}
+            db_dir: {type: string}
+            data_path: {type: string}
+            seed: {type: int, default: 42}
+            training_experiment_id: {type: int, default: "-1"}
+            study_name: {type: string}
+        command: "python plasticc_simple2.py search --epochs={epochs}
+            --batch-size={batch_size} --db-dir={db_dir}
+            --data-path={data_path} --seed={seed}
+            --training-experiment-id={training_experiment_id}
+            --study-name={study_name} --max-runs={max_runs}"
+
+    train_lgbm:
+        parameters:
+            data_path: {type: string}
+            seed: {type: int, default: 42}
+            random_state: {type: int, default: 1}
+        command: "python plasticc_lgbm.py train
+            --data-path={data_path} --seed={seed}
+            --random-state={random_state}"
