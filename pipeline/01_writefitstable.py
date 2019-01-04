@@ -7,8 +7,13 @@ datadir='/work/nsuzuki/plasticc2018/data/'
 def write_fitstable_ltcv():
     pl=plasticc.LSSTplasticc()
     #pl.read_ltcvdata('../data/training_set.csv')
+<<<<<<< HEAD
     #pl.read_ltcvdata_genfromtxt(datadir+'/test_set100.csv')
     pl.read_ltcvdata(datadir+'/test_set.csv')
+=======
+    pl.read_ltcvdata(datadir+'/test_set.csv')
+    #pl.read_ltcvdata_genfromtxt(datadir+'/test_set100.csv')
+>>>>>>> 35ecb853368670c84dd005843c1af36a1c9e5297
     #pl.read_ltcvdata_genfromtxt(datadir+'/test_set.csv')
     print('Finished Reading csv, Number of Object=',len(pl.ltcv['object_id']))
 
