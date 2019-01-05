@@ -2,12 +2,18 @@ import pyfits
 import plasticc
 
 datadir='/Users/suzuki/github/projects_plasticc/data_original/'
+datadir='/work/nsuzuki/plasticc2018/data/'
 
 def write_fitstable_ltcv():
     pl=plasticc.LSSTplasticc()
     #pl.read_ltcvdata('../data/training_set.csv')
+<<<<<<< HEAD
+    #pl.read_ltcvdata_genfromtxt(datadir+'/test_set100.csv')
+    pl.read_ltcvdata(datadir+'/test_set.csv')
+=======
     pl.read_ltcvdata(datadir+'/test_set.csv')
     #pl.read_ltcvdata_genfromtxt(datadir+'/test_set100.csv')
+>>>>>>> 35ecb853368670c84dd005843c1af36a1c9e5297
     #pl.read_ltcvdata_genfromtxt(datadir+'/test_set.csv')
     print('Finished Reading csv, Number of Object=',len(pl.ltcv['object_id']))
 
@@ -24,6 +30,6 @@ def write_fitstable_ltcv():
     #tblhdu.writeto('training_set.fits')
     #tblhdu.writeto(datadir+'/test_set.fits')
     #tblhdu.writeto('test_set100.fits')
-    tblhdu.writeto('test_set.fits')
+    tblhdu.writeto('test_set_v2.fits')
 
 write_fitstable_ltcv()
