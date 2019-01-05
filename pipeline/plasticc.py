@@ -145,6 +145,7 @@ class LSSTplasticc:
           self.fluxstd=numpy.std(self.flux[drows])
           self.errmean=numpy.mean(self.fluxerr[drows])
           self.sigmamean=numpy.mean(self.flux[drows]/self.fluxerr[drows])
+          self.sigmasum=numpy.sum(self.flux[drows]/self.fluxerr[drows])
           self.sigmastd=numpy.mean(self.flux[drows]/self.fluxerr[drows])
           self.skewness=scipy.stats.skew(self.flux[drows])
           self.kurtosis=scipy.stats.kurtosis(self.flux[drows])
