@@ -14,6 +14,7 @@ Reading Plasticc FITS Table
 def read_fitstable_ltcv():
     start=time.time()
     #ltcvtbl=pyfits.open('test_set100.fits',memmap=True)
+<<<<<<< HEAD
     #ltcvtbl=pyfits.open('test_set100.fits',memmap=True)
     ltcvtbl=pyfits.open(datadir+'test_set.fits',memmap=True)
     ltcvdata=ltcvtbl[1].data
@@ -22,5 +23,12 @@ def read_fitstable_ltcv():
     print(ltcvdata[-3])
     print(ltcvdata[-2])
     print(ltcvdata[-1])
+=======
+    #ltcvtbl=pyfits.open('test_set.fits',memmap=True)
+    ltcvtbl=pyfits.open('test_set.fits')
+    ltcvdata=ltcvtbl[1].data
+    rows=numpy.arange(50)
+    print(ltcvdata[rows])
+>>>>>>> 28b73aac5acf30c9571db9bfad3da0397471c555
 
 read_fitstable_ltcv()
