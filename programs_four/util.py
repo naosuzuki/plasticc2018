@@ -18,8 +18,8 @@ def get_hostgal_range(hostgal_photoz):
 
 def get_fe_argparser(desc):
     parser = argparse.ArgumentParser(description=desc)
-    parser.add_argument("meta_path", action="store", default="input/test_set_metadata.csv")
-    parser.add_argument("light_curve_path", action="store", default="input/test_set.csv")
+    parser.add_argument("meta_path", action="store", default="../data/test_set_metadata.csv")
+    parser.add_argument("light_curve_path", action="store", default="../data/test_set.csv")
     parser.add_argument("output_path", action="store", default="features/features_test.csv")
     return parser.parse_args()
 
@@ -35,8 +35,8 @@ def map_classes(df):
 
 
 def prepare_data():
-    train_df = pd.read_csv("input/training_set_metadata.csv")
-    test_df = pd.read_csv("input/test_set_metadata.csv")
+    train_df = pd.read_csv("../data/training_set_metadata.csv")
+    test_df = pd.read_csv("../data/test_set_metadata.csv")
 
     for feature_file in ["bazin", "features_v1", "features_v2"]:
         train_df = train_df.merge(pd.read_csv("features/train_{}.csv".format(feature_file)),

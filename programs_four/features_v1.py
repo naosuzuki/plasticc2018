@@ -1,10 +1,21 @@
 import numpy as np
 import pandas as pd
 from scipy.stats import kurtosis
-from util import get_fe_argparser, none_or_one
+import argparse
+#from util import get_fe_argparser, none_or_one
 
+def none_or_one(pd_series):
+    return pd_series/pd_series
+
+def get_fe_argparser(desc):
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument("meta_path", action="store", default="../data/test_set_metadata.csv")
+    parser.add_argument("light_curve_path", action="store", default="../data/test_set.csv")
+    parser.add_argument("output_path", action="store", default="features/features_test.csv")
+    return parser.parse_args()
 
 def extract_features_v1(df):
+
     df["std_flux"] = df["flux"].values
     df["min_flux"] = df["flux"].values
     df["max_flux"] = df["flux"].values
@@ -50,10 +61,14 @@ def extract_features_v1(df):
         aggs["dd" + str(i)] = "max"
 
     df = df.groupby("object_id").agg(aggs).reset_index()
-    df = df.rename(columns={"detected": "total_detected"})
+    #df = df.rename(columns={"detected": "total_detected"})
+    #df = df.rename(index=str, columns={"detected": "total_detected"})
+    #print(df["total_detected"])
     df["time_diff_full"] = df["detected_mjd_max"] - df["detected_mjd_min"]
-    df["detected_period"] = df["time_diff_full"] / df["total_detected"]
-    df["ratio_detected"] = df["total_detected"] / df["observation_count"]
+    #df["detected_period"] = df["total_detected"].values
+    #df["detected_period"] = df["time_diff_full"] / df["total_detected"]
+    #df["detected_period"] = df["time_diff_full"] / df["detected"]
+    #df["ratio_detected"] = df["total_detected"] / df["observation_count"]
     df["delta_flux"] = df["max_flux"] - df["min_flux"]
 
     for col in ["sn", "flux_sn", "f", "dd"]:
@@ -65,6 +80,10 @@ def extract_features_v1(df):
 
 
 if __name__ == "__main__":
-    args = get_fe_argparser("Generate features with passband.")
-    lc_df = pd.read_csv(args.light_curve_path)
-    extract_features_v1(lc_df).to_csv(args.output_path, index=False)
+    #args = get_fe_argparser("Generate features with passband.")
+    #lc_df = pd.read_csv(args.light_curve_path)
+    #extract_features_v1(lc_df).to_csv(args.output_path, index=False)
+    #lc_df = pd.read_csv('../data/training_set.csv')
+    lc_df = pd.read_csv('../data/training_set.csv', header=0,dtype={'objec_id':np.uint32,'mjd':np.float16,\
+                      'passband':np.uint8,'flux':np.float32,'flux_err':np.float32,'detected':np.float32})
+    extract_features_v1(lc_df).to_csv('./features/training_features_v1.csv', index=False)
